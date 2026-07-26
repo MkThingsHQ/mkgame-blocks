@@ -79,6 +79,56 @@ test.describe('Super Blocks', () => {
     expect(errors).toEqual([]);
   });
 
+  test('dragged piece follows the pointer and can be dropped', async ({
+    page,
+  }) => {
+    const errors = await openHome(page);
+    await page.getByTestId('start-classic').click();
+
+    const piece = page.getByTestId('game-piece-0');
+    const shape = piece.locator('.piece-shape');
+    const target = page.getByTestId('board-cell-3-3');
+    const pieceBox = await piece.boundingBox();
+    const targetBox = await target.boundingBox();
+
+    expect(pieceBox).not.toBeNull();
+    expect(targetBox).not.toBeNull();
+    if (!pieceBox || !targetBox) return;
+
+    const pointerStart = {
+      x: pieceBox.x + pieceBox.width / 2,
+      y: pieceBox.y + pieceBox.height / 2,
+    };
+    const pointerEnd = {
+      x: targetBox.x + targetBox.width / 2,
+      y: targetBox.y + targetBox.height / 2,
+    };
+
+    await page.mouse.move(pointerStart.x, pointerStart.y);
+    await page.mouse.down();
+    await page.mouse.move(pointerEnd.x, pointerEnd.y, { steps: 12 });
+
+    const draggedShapeBox = await shape.boundingBox();
+    expect(draggedShapeBox).not.toBeNull();
+    if (!draggedShapeBox) return;
+
+    const draggedShapeCenter = {
+      x: draggedShapeBox.x + draggedShapeBox.width / 2,
+      y: draggedShapeBox.y + draggedShapeBox.height / 2,
+    };
+    expect(
+      Math.hypot(
+        pointerEnd.x - draggedShapeCenter.x,
+        pointerEnd.y - draggedShapeCenter.y
+      )
+    ).toBeLessThan(12);
+    await expect(page.locator('.is-preview-valid')).toHaveCount(3);
+
+    await page.mouse.up();
+    await expect(page.locator('.board-cell.is-occupied')).toHaveCount(3);
+    expect(errors).toEqual([]);
+  });
+
   test('plays a deterministic classic round and saves the score', async ({
     page,
   }) => {
