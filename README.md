@@ -5,6 +5,8 @@ React, and Cloudflare Workers.
 
 ![Super Blocks](./public/og.png)
 
+**Play online:** https://blocks.mksaas.link
+
 ## Features
 
 - Classic endless mode
@@ -83,9 +85,9 @@ credentials must not be added to the Worker configuration or uploaded with
 
 This project belongs to the same small collection of standalone browser games:
 
-- [game-poly](https://github.com/open-fox/game-poly) — a browser port of the
+- [game-poly](https://github.com/MkThingsHQ/mkgame-poly) — a browser port of the
   original level-based 8×8 block-fitting puzzle
-- [game-sudoku](https://github.com/open-fox/game-sudoku) — MimoDoku, a cozy
+- [game-sudoku](https://github.com/MkThingsHQ/mkgame-sudoku) — MimoDoku, a cozy
   cat-placement Sudoku with handcrafted and daily puzzles
 
 ## Author
@@ -119,11 +121,16 @@ Cloudflare Workers deployment.
 
 Some audio files were extracted from publicly obtainable application assets
 and are included only for learning and research. Their original source paths
-are documented in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
+are documented in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). These
+files remain subject to their respective rights holders; the MIT license does
+not grant permission to copy, redistribute, modify, or otherwise use them
+beyond any rights you independently obtain.
 
 If you are a rights holder and believe an asset should be removed, please open
 an issue or contact the repository maintainer. The asset will be reviewed and
-removed when appropriate.
+removed when appropriate. If you fork or distribute this project, you are
+responsible for removing or replacing third-party assets unless you have the
+necessary authorization.
 
 ## License
 
