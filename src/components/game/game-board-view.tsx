@@ -32,7 +32,11 @@ export interface GameClearEffect {
 }
 
 interface DragState {
+  clientX: number;
+  clientY: number;
   grabColumn: number;
+  grabClientX: number;
+  grabClientY: number;
   grabRow: number;
   pieceIndex: number;
 }
@@ -129,7 +133,11 @@ export function GameBoardView({
     );
     setSelectedPiece(pieceIndex);
     setDrag({
+      clientX: event.clientX,
+      clientY: event.clientY,
       grabColumn: Number(shapeCell?.dataset.shapeColumn ?? 0),
+      grabClientX: event.clientX,
+      grabClientY: event.clientY,
       grabRow: Number(shapeCell?.dataset.shapeRow ?? 0),
       pieceIndex,
     });
@@ -142,6 +150,11 @@ export function GameBoardView({
   ) => {
     const piece = pieces[pieceIndex];
     if (!piece || !drag || drag.pieceIndex !== pieceIndex) return;
+    setDrag((current) =>
+      current
+        ? { ...current, clientX: event.clientX, clientY: event.clientY }
+        : null
+    );
     const placement = getPointerPlacement(event, piece, drag);
     setPreview(hintsEnabled ? placement : null);
   };
@@ -387,10 +400,17 @@ export function GameBoardView({
           }
 
           const bounds = getGamePieceBounds(piece);
+          const isDragging = drag?.pieceIndex === pieceIndex;
           const style = {
             '--shape-columns': bounds.columns,
             '--shape-rows': bounds.rows,
           } as CSSProperties;
+          const draggedShapeStyle = isDragging
+            ? ({
+                transform: `translate(${drag.clientX - drag.grabClientX}px, ${drag.clientY - drag.grabClientY}px) scale(1.08)`,
+                transition: 'none',
+              } as CSSProperties)
+            : undefined;
 
           return (
             <button
@@ -398,7 +418,7 @@ export function GameBoardView({
               className={joinClasses(
                 'piece-slot',
                 selectedPiece === pieceIndex && 'is-selected',
-                drag?.pieceIndex === pieceIndex && 'is-dragging'
+                isDragging && 'is-dragging'
               )}
               data-testid={`game-piece-${pieceIndex}`}
               key={piece.id}
@@ -417,7 +437,10 @@ export function GameBoardView({
                 setPreview(null);
               }}
             >
-              <span className="piece-shape" style={style}>
+              <span
+                className="piece-shape"
+                style={{ ...style, ...draggedShapeStyle }}
+              >
                 {piece.cells.map(([row, column]) => (
                   <span
                     className={`game-block game-block-${piece.color}`}
